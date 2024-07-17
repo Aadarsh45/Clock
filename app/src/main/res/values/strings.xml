@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Clock</string>
+    <string name="title_activity_clock">Clock</string>
+    <string name="title_activity_animated_boundaries">AnimatedBoundaries</string>
+    <string name="title_activity_mainactivity2">mainactivity2</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>
