@@ -21,6 +21,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 
 
+
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
@@ -30,10 +31,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
 import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.math.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.min
+import androidx.compose.ui.unit.*
+
+
+
+
+
+
 
 class Clock : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,70 +78,93 @@ class Clock : ComponentActivity() {
                     textAlign = TextAlign.Center
                 )
 
-                Box(
+                BoxWithConstraints(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
+                    //responsive
+                    val dpToPx = with(LocalDensity.current) { 16.dp.toPx() }
+
+                    val screenWidth = maxWidth
+                    val clockSize= min(screenWidth, maxHeight) * 0.8f  // Adjust 0.8f as needed
+                    val radius = with(LocalDensity.current) { (clockSize.toPx() / 2 - 100) }
+                    val strokeWidth = 40.dp * (clockSize / 350.dp)
+
+
                     CircleBoundaryAnimation(
                         angleOffset = 0f,
                         segmentColors = listOf(Color.Magenta, Color.Yellow, Color.Blue),
-                        waveAmplitude = 25.dp,
-                        durationMillis = 3000
+                        waveAmplitude = 25.dp * (clockSize / 350.dp),
+                        durationMillis = 3000,
+                        radius = radius,
+                        strokeWidth = strokeWidth
                     )
                     CircleBoundaryAnimation(
                         angleOffset = 90f,
                         segmentColors = listOf(Color.Magenta, Color.Yellow, Color.Blue),
-                        waveAmplitude = 17.dp,
-                        durationMillis = 900
+                        waveAmplitude = 17.dp* (clockSize / 350.dp),
+                        durationMillis = 900,
+                                radius = radius,
+                        strokeWidth = strokeWidth
                     )
 
                     CircleBoundaryAnimation(
                         angleOffset = 45f,
                         segmentColors = listOf(Color.Magenta, Color.Yellow, Color.Blue),
-                        waveAmplitude = 5.dp,
-                        durationMillis = 3500
+                        waveAmplitude = 5.dp* (clockSize / 350.dp),
+                        durationMillis = 3500,
+                                radius = radius,
+                        strokeWidth = strokeWidth
                     )
                     CircleBoundaryAnimation(
                         angleOffset = 120f,
                         segmentColors = listOf(Color.Magenta, Color.Yellow, Color.Blue),
-                        waveAmplitude = 15.dp,
-                        durationMillis = 1500
+                        waveAmplitude = 15.dp* (clockSize / 350.dp),
+                        durationMillis = 1500,
+                                radius = radius,
+                        strokeWidth = strokeWidth
                     )
 
-                    Circle()
-                    MyClock()
+                    Circle(radius = radius)
+                    MyClock(clockSize = clockSize)
                 }
             }
         }
     }
 
     @Composable
-    fun Circle() {
+    fun Circle(radius: Float) {
         Canvas(modifier = Modifier.size(100.dp), onDraw = {
             drawCircle(
                 color = Color.Black,
-                radius = 181.dp.toPx()
+                radius = radius+55.dp.toPx(),
             )
         })
     }
 
     @Composable
-    fun MyClock() {
+    fun MyClock(clockSize: Dp) {
         val calendar = remember { Calendar.getInstance() }
+        var currentTimeMillis by remember { mutableStateOf(System.currentTimeMillis()) } // Moved outside
         val second by remember { derivedStateOf { calendar.get(Calendar.SECOND) } }
         val minute by remember { derivedStateOf { calendar.get(Calendar.MINUTE) } }
         val hour by remember { derivedStateOf { calendar.get(Calendar.HOUR) } }
 
-        LaunchedEffect(key1 = true) {while (true) {
-            calendar.timeInMillis = System.currentTimeMillis()
-            delay(1L)
-        }
+        LaunchedEffect(key1 = second) {
+            while (true) {
+                currentTimeMillis = System.currentTimeMillis() // Update MutableState
+                calendar.timeInMillis = currentTimeMillis
+                val remainingMillis = 1000 - (calendar.timeInMillis % 1000)
+                delay(remainingMillis)
+              println("Hour Angle: $hour, Minute Angle: $minute, Second Angle: $second") // Log inside the loop
+            }
         }
 
         Canvas(
             modifier = Modifier
-                .size(350.dp)
+                .size(clockSize) // Use clockSize for responsive sizing
         ) {
             val center = Offset(size.width / 2f, size.height / 2f)
             val radius = min(size.width, size.height) / 2f
@@ -140,32 +174,33 @@ class Clock : ComponentActivity() {
             val hourAngle = (hour % 12 + minute / 60f) * 30f
             drawSegmentedHand(
                 angle = hourAngle,
-                length = 0.4f * radius,
-                thickness = 8.dp,
+                length = 0.6f* radius,
+                thickness = 4.dp,
                 numSegments = numSegments,
-                colors = listOf(Color.Green, Color.Gray)
+                colors = listOf(Color.Red, Color.Gray)
             )
 
             // Draw minute hand
             val minuteAngle = (minute + second / 60f) * 6f
             drawSegmentedHand(
                 angle = minuteAngle,
-                length = 0.6f * radius,thickness = 6.dp,
+                length = 0.9f * radius,thickness = 2.dp,
                 numSegments = numSegments,
                 colors = listOf(Color.Blue, Color.Gray)
             )
 
             // Draw second hand
-            val secondAngle = second * 6f
-            drawSegmentedHand(
-                angle = secondAngle,
-                length = 0.8f * radius,
-                thickness = 4.dp,
-                numSegments = numSegments,
-                colors = listOf(Color.Red, Color.Gray)
-            )
+//            val secondAngle = second * 6f
+//            drawSegmentedHand(
+//                angle = secondAngle,
+//                length = 0.8f * radius,
+//                thickness = 1.dp,
+//                numSegments = numSegments,
+//                colors = listOf(Color.Red, Color.Gray)
+//            )
         }
     }
+
     private fun DrawScope.drawSegmentedHand(
         angle: Float,
         length: Float,
@@ -201,10 +236,12 @@ class Clock : ComponentActivity() {
 
     @Composable
         fun CircleBoundaryAnimation(
-            angleOffset: Float,
-            segmentColors: List<Color>,
-            waveAmplitude: Dp,
-            durationMillis: Int
+        angleOffset: Float,
+        segmentColors: List<Color>,
+        waveAmplitude: Dp,
+        durationMillis: Int,
+        radius: Float, // Added radius parameter
+        strokeWidth: Dp
         ) {
             var animationProgress by remember { mutableStateOf(0f) }
 
@@ -267,7 +304,7 @@ class Clock : ComponentActivity() {
                     drawPath(
                         path = path,
                         color = segmentColor, // Use the calculated color with alpha
-                        style = Stroke(width = 40.dp.toPx(),
+                        style = Stroke(strokeWidth.toPx(),
                             cap = StrokeCap.Round)
                     )
                 }
@@ -276,3 +313,4 @@ class Clock : ComponentActivity() {
 
 
 }
+
