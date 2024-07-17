@@ -6,11 +6,12 @@ Welcome to the Clock App! This Android application displays the current time, da
 
 - **Current Time Display**: Shows the current hour, minute, and second.
 - **Date Display**: Displays the current day of the week and date.
-- **Sound Wave Animation**: Cool and dynamic sound wave animation around the clock.
+- **Wave Animation**: Cool and dynamic wave animation around the clock.
 
 ## Screenshots
 
-![Screenshot 1](/ClockApp.png)
+
+<img src="ClockApp.png" alt="Screenshot" width="300"/>
 
 ## Installation
 
