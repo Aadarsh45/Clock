@@ -1,49 +1,84 @@
-# Clock App
+# AnalogClockApp
 
-Welcome to the Clock App! This Android application displays the current time, day of the week, and date. It features a visually appealing sound wave animation around the clock.
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+## Introduction
+
+**AnalogClockApp** is a modern and responsive Android application that uses Jetpack Compose for animations and UI. The app features an analog clock that displays the current time, along with the day and date. Designed to be highly responsive, AnalogClockApp provides a smooth and visually appealing user experience.
 
 ## Features
 
-- **Current Time Display**: Shows the current hour, minute, and second.
-- **Date Display**: Displays the current day of the week and date.
-- **Wave Animation**: Cool and dynamic wave animation around the clock.
+- 🕰 **Analog clock display**
+- 📅 **Shows current day and date**
+- 🚀 **Built with Jetpack Compose for animations**
+- 📱 **Responsive design**
 
 ## Screenshots
 
+Include some screenshots of your app here.
+
+<p align="center">
+  <img src="/ClockApp.png" width="200" >
+</p>
 
 
 ## Installation
 
-To run the Clock App, follow these steps:
+Step-by-step instructions to set up a development environment for AnalogClockApp.
 
-1. Clone this repository:
+1. **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/ClockApp.git
+    git clone https://github.com/your-username/AnalogClockApp.git
     ```
-2. Open the project in Android Studio.
-3. Build and run the app on an Android device or emulator.
-
-## Code Overview
-
-The main code for the Clock App is located in the `com.example.clock` package. Here is a brief overview of the main components:
-
-### Main Activity
-
-The main activity, `Clock`, is where the app's UI is set up. It includes the display for the current time, day of the week, date, and the sound wave animation.
-
-### UI Components
-
-- **Circle**: Draws the central circle of the clock.
-- **MyClock**: Displays the hour, minute, and second hands of the clock.
-- **CircleBoundaryAnimation**: Creates the animated sound wave effect around the clock.
+2. **Open the project in Android Studio.**
+3. **Build the project:**
+    - Sync Gradle by clicking on "Sync Now" in the top right corner if prompted.
+4. **Run the application:**
+    - Connect your Android device or start an emulator.
+    - Click on the "Run" button or use the shortcut `Shift + F10`.
 
 ## Usage
 
-When you run the app, it will display the current time in a digital clock format. The day of the week and date are shown at the top. Around the clock, you will see a sound wave animation that continuously moves, creating a dynamic visual effect.
+Instructions and examples for using the app.
 
-## Dependencies
+1. Open the AnalogClockApp on your device.
+2. View the current time displayed in an analog format.
+3. Check the day and date displayed below the clock.
 
-This app uses Jetpack Compose for the UI and animation components.
+## Contributing
+
+Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) for more information.
+
+1. **Fork the repository.**
+2. **Create a new branch:**
+    ```bash
+    git checkout -b feature-name
+    ```
+3. **Make your changes.**
+4. **Commit your changes:**
+    ```bash
+    git commit -m 'Add some feature'
+    ```
+5. **Push to the branch:**
+    ```bash
+    git push origin feature-name
+    ```
+6. **Open a pull request.**
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
