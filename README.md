@@ -29,7 +29,7 @@
 Include some screenshots of your app here.
 
 <p align="center">
-  <img src="/ClockApp.png" width="200" >
+  <img src="/FinalApp.png" width="200" >
 </p>
 
 
