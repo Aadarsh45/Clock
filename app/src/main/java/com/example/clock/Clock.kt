@@ -18,10 +18,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+
+
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
+
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -29,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.math.*
+import androidx.compose.ui.graphics.Color
 
 class Clock : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,24 +74,28 @@ class Clock : ComponentActivity() {
                 ) {
                     CircleBoundaryAnimation(
                         angleOffset = 0f,
-                        segmentColors = listOf(Color.Red, Color.Yellow, Color.Magenta),
-                        waveAmplitude = 20.dp
+                        segmentColors = listOf(Color.Magenta, Color.Yellow, Color.Blue),
+                        waveAmplitude = 25.dp,
+                        durationMillis = 3000
                     )
                     CircleBoundaryAnimation(
                         angleOffset = 90f,
-                        segmentColors = listOf(Color.Magenta, Color.Green, Color.Blue),
-                        waveAmplitude = 30.dp
+                        segmentColors = listOf(Color.Magenta, Color.Yellow, Color.Blue),
+                        waveAmplitude = 17.dp,
+                        durationMillis = 900
                     )
 
                     CircleBoundaryAnimation(
                         angleOffset = 45f,
-                        segmentColors = listOf(Color.Magenta, Color.Green, Color.Blue),
-                        waveAmplitude = 5.dp
+                        segmentColors = listOf(Color.Magenta, Color.Yellow, Color.Blue),
+                        waveAmplitude = 5.dp,
+                        durationMillis = 3500
                     )
                     CircleBoundaryAnimation(
                         angleOffset = 120f,
-                        segmentColors = listOf(Color.Magenta, Color.Green, Color.Blue),
-                        waveAmplitude = 15.dp
+                        segmentColors = listOf(Color.Magenta, Color.Yellow, Color.Blue),
+                        waveAmplitude = 15.dp,
+                        durationMillis = 1500
                     )
 
                     Circle()
@@ -101,7 +110,7 @@ class Clock : ComponentActivity() {
         Canvas(modifier = Modifier.size(100.dp), onDraw = {
             drawCircle(
                 color = Color.Black,
-                radius = 163.dp.toPx()
+                radius = 181.dp.toPx()
             )
         })
     }
@@ -191,61 +200,79 @@ class Clock : ComponentActivity() {
     }
 
     @Composable
-    fun CircleBoundaryAnimation( angleOffset: Float,
-                                 segmentColors: List<Color>,
-                                 waveAmplitude: Dp
-    ) {
-        var animationProgress by remember { mutableStateOf(0f) }
-        val segmentColors = listOf(Color.Red, Color.Green, Color.Blue)
-
-        LaunchedEffect(Unit) {
-            animationProgress = 0f
-            animate(
-                initialValue = 0f,
-                targetValue = 100f,
-                animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = 800, easing =LinearEasing),
-                    repeatMode = RepeatMode.Restart
-                )
-            ) { value, _ ->
-                animationProgress = value
-            }
-        }
-
-        Canvas(
-            modifier = Modifier.fillMaxSize()
+        fun CircleBoundaryAnimation(
+            angleOffset: Float,
+            segmentColors: List<Color>,
+            waveAmplitude: Dp,
+            durationMillis: Int
         ) {
-            val radius = size.width / 2 - 100
-            val center = Offset(size.width / 2+5, size.height / 2)
+            var animationProgress by remember { mutableStateOf(0f) }
 
-            val waveOffset = (animationProgress + angleOffset) * (PI / 180)
-            val waveAmplitude = waveAmplitude.toPx()
-            val segmentAngle = 360f / segmentColors.size
-
-            for (segmentIndex in segmentColors.indices) {
-                val points = mutableListOf<Offset>()
-                val startAngle = segmentIndex * segmentAngle
-                val endAngle = (segmentIndex + 1) * segmentAngle
-
-                for (i in startAngle.toInt()..endAngle.toInt()) {
-                    val angle = i * (PI / 180)
-                    val x = radius * cos(angle) + center.x + sin(waveOffset + angle) * waveAmplitude
-                    val y = radius * sin(angle) + center.y + cos(waveOffset + angle) * waveAmplitude
-
-                    if (x in 0f..size.width && y in 0f..size.height) {
-                        points.add(Offset(x.toFloat(), y.toFloat()))
-                    }
+            LaunchedEffect(Unit) {
+                animationProgress = 0f
+                animate(
+                    initialValue = 0f,
+                    targetValue = 360f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis, easing = LinearEasing),
+                        repeatMode = RepeatMode.Restart
+                    )
+                ) { value, _ ->
+                    animationProgress = value
                 }
+            }
 
-                drawPoints(
-                    points = points,
-                    pointMode = PointMode.Points,
-                    color = segmentColors[segmentIndex],
-                    strokeWidth = 20.dp.toPx(),
-                    cap = StrokeCap.Round
-                )
+            Canvas(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                val radius = size.width / 2 -100
+                val center = Offset(size.width / 2 + 5, size.height / 2)
+
+                val waveOffset = (animationProgress + angleOffset) * (PI / 180)
+                val waveAmplitudePx = waveAmplitude.toPx()
+                val segmentAngle = 360f / segmentColors.size
+
+                for (segmentIndex in segmentColors.indices) {
+                    val path = Path()
+                    val startAngle = segmentIndex * segmentAngle
+                    val endAngle = (segmentIndex + 1) * segmentAngle
+                    val baseColor = segmentColors[segmentIndex]
+
+                    path.moveTo(
+                        x = (center.x + radius * cos(startAngle * (PI / 180)) + sin(waveOffset + startAngle * (PI / 180)) * waveAmplitudePx).toFloat(),
+                        y = (center.y + radius * sin(startAngle * (PI / 180)) + cos(waveOffset + startAngle * (PI / 180)) * waveAmplitudePx).toFloat()
+                    )
+                    var segmentColor = Color.Transparent
+                    for (i in startAngle.toInt()..endAngle.toInt()) {
+                        val angle = i * (PI / 180)
+                        val distanceFromCenter = radius + sin(waveOffset + angle) * waveAmplitudePx
+                        val colorAlpha = (1 - distanceFromCenter / (size.width / 2))
+                            .coerceIn(0.0, 1.0) // Calculate alpha based on distance
+                            segmentColor = baseColor.copy(alpha = colorAlpha.toFloat())
+
+                        val x = distanceFromCenter * cos(angle) + center.x
+                        val y = distanceFromCenter * sin(angle) + center.y
+
+                        if (x in 0f..size.width && y in 0f..size.height) {
+                            path.lineTo(x.toFloat(), y.toFloat())
+                        }
+                    }
+
+                    // Close the path for a continuous line
+                    path.lineTo(
+                        x = (center.x + radius * cos(endAngle * (PI / 180)) + sin(waveOffset + endAngle * (PI / 180)) * waveAmplitudePx).toFloat(),
+                        y = (center.y + radius * sin(endAngle * (PI / 180)) + cos(waveOffset + endAngle * (PI / 180)) * waveAmplitudePx).toFloat()
+                    )
+
+                    drawPath(
+                        path = path,
+                        color = segmentColor, // Use the calculated color with alpha
+                        style = Stroke(width = 40.dp.toPx(),
+                            cap = StrokeCap.Round)
+                    )
+                }
             }
         }
-    }
+
 
 }
