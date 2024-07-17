@@ -11,7 +11,6 @@ Welcome to the Clock App! This Android application displays the current time, da
 ## Screenshots
 
 
-<img src="ClockApp.png" alt="Screenshot" width="300"/>
 
 ## Installation
 
