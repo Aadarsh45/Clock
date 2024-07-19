@@ -53,7 +53,7 @@ Instructions and examples for using the app.
 
 1. Open the AnalogClockApp on your device.
 2. View the current time displayed in an analog format.
-3. Check the day and date displayed below the clock.
+3. Check the day and date displayed above the clock.
 
 ## Contributing
 
